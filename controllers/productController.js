@@ -15,7 +15,10 @@ const getAllProducts = async (req, res) => {
 
 const getSingleProduct = async (req, res) => {
   const { id: productId } = req.params;
-  const product = await Product.findOne({ _id: productId }).populate('reviews');
+  const product = await Product.findOne({ _id: productId })?.populate({
+    path: "reviews",
+    strictPopulate: false,
+  });
 
   if (!product) {
     throw new NotFoundError(`Product with this id ${productId} does not exist`);
@@ -35,6 +38,8 @@ const updateProduct = async (req, res) => {
   if (!product) {
     throw new NotFoundError(`Product with this id ${productId} does not exist`);
   }
+
+  res.status(200).json({ product });
 };
 
 const deleteProduct = async (req, res) => {
@@ -44,7 +49,7 @@ const deleteProduct = async (req, res) => {
   if (!product) {
     throw new NotFoundError(`Product with this id ${productId} does not exist`);
   }
-  await product.remove();
+  await product.deleteOne();
   res.status(200).json({ msg: "Product successfully removed" });
 };
 
@@ -55,7 +60,7 @@ const uploadImage = async (req, res) => {
 
   const productImage = req.files.image;
 
-  if (productImage.mimeType.startsWith("image")) {
+  if (!productImage.mimeType.startsWith("image")) {
     throw new BadRequestError("Please upload image");
   }
   const maxSize = 1024 * 1024;

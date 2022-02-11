@@ -9,7 +9,7 @@ const createReview = async (req, res) => {
 
   const isValidProduct = await Product.findOne({ _id: productId });
 
-  if (isValidProduct) {
+  if (!isValidProduct) {
     throw new NotFoundError(`Product with the id: ${productId}`);
   }
 
@@ -22,7 +22,7 @@ const createReview = async (req, res) => {
     throw BadRequestError("Already submitted review for this product");
   }
   req.body.user = req.user.userId;
-  const review = Review.create(req.body);
+  const review = await Review.create(req.body);
   res.status(201).json({ review });
 };
 const getAllReview = async (req, res) => {
@@ -55,8 +55,8 @@ const updateReview = async (req, res) => {
   checkPermissions(req.user, review.user);
 
   const updatedReview = await Review.findOneAndUpdate(
-    { _id: req.user.userId },
-    { rating, title, comment },
+    { _id: req.params.id },
+    req.body,
     { new: true, runValidators: true }
   );
 

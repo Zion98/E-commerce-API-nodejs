@@ -56,7 +56,7 @@ app.all("*", (req, res) => {
   res.status(404).send("<h1>Resource not found</h1>");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);

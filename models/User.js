@@ -28,9 +28,10 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre("save", async function () {
+UserSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password);
+  this.password = await bcrypt.hash(this.password, salt);
+  next()
 });
 
 UserSchema.methods.createJWT = function () {
@@ -38,7 +39,7 @@ UserSchema.methods.createJWT = function () {
     { userId: this._id, name: this.name, role: this.role },
     process.env.JWT_SECRET,
     {
-      expiresIn: process.JWT_LIFETIME,
+      expiresIn: process.env.JWT_LIFETIME,
     }
   );
 };

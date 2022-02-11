@@ -10,9 +10,10 @@ const {
   checkPermissions,
   attachCookies,
 } = require("../utils");
-const getAllUsers = async (req, res) => {
-  const user = User.find({ role: "user" }).select("-password");
-  res.status(200).json({ users });
+
+const getAllUsers = async (_req, res) => {
+  const user = await User.find({ role: "user" }).select("-password");
+  res.status(200).json({ user });
 };
 const getSingleUser = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id }).select("-password");
