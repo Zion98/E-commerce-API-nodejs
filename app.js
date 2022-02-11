@@ -52,6 +52,12 @@ app.use("/api/v1/orders", orderRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+app.get("/", (req, res) => {
+  res.send(
+    '<h1>Ecommerce API</h1> <a href="/api-docs">Click here to access Documentation</a>'
+  );
+});
+
 app.all("*", (req, res) => {
   res.status(404).send("<h1>Resource not found</h1>");
 });
